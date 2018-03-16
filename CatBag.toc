@@ -1,0 +1,6 @@
+## Interface: 70300
+## Title: CatBag
+## Author: Hnk
+## Version: 0.1.0
+
+main.lua
