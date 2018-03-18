@@ -1,0 +1,24 @@
+{
+    "Class Template":{
+        "prefix": "class",
+        "description": "Template for a lua class with constructor.",
+        "body": [
+            "${1:Class} = {",
+            "}",
+            "",
+            "--==# Constructor #==--",
+            "",
+            "function ${1:Class}:new(obj)",
+            "    obj = obj or {}",
+            "    self.__index = self",
+            "    self.__type = \"${1:Class}\"",
+            "    setmetatable(obj, self)",
+            "    return obj",
+            "end",
+            "",
+            "--==# Functions #==--",
+            "",
+            "$0"
+        ]
+    }
+}
