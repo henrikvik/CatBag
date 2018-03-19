@@ -14,6 +14,8 @@ function Filter:new(obj)
     return obj
 end
 
+--==# Meta Functions #==--
+
 --==# Member Functions #==--
 
 function Filter:filter_items(items)

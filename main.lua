@@ -1,29 +1,9 @@
-function print_table(t)
-    local ln = "{ "
-    for i,v in ipairs(t) do
-        ln = ln .. tostring(v) .. ", "
-    end
-    print(ln .. "}")
-end
 
+
+local b = Backend:new()
+local i = b:query_items()
 
 local f = Filter:new()
-local items = { 
-    Item:new({ilevel = 10}),
-    Item:new({ilevel = 10}),
-    Item:new({ilevel = 20}),
-    Item:new({ilevel = 20})
-}
+f:set_filter_func("function(item) return item.lootable end")
 
-local ts, fs = f:filter_items(items)
-print_table(ts)
-print_table(fs)
-
-f:set_filter_func("function(item) return item.ilevel > 0 end")
-
-local ts, fs = f:filter_items(items)
-print_table(ts)
-print_table(fs)
-
-
-
+print_table(f:filter_items(i))

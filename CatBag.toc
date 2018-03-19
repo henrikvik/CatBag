@@ -1,12 +1,12 @@
 ## Interface: 70300
 ## Title: CatBag
 ## Author: Hnk
-## Version: 0.1.0
+## Version: 0.0.1
 
 Utility.lua
 
+Backend.lua
 Backend/Filter.lua
 Backend/Item.lua
-Backend.lua
 
 main.lua

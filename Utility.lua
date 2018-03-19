@@ -16,3 +16,26 @@ function assert_type(...)
         )
     end
 end
+
+function table_tostring(t, pad)
+    if type_name(pad) ~= "string" then pad = "" end
+    local str = pad .. "{"
+    pad = pad .. "  "
+    for k,v in pairs(t) do
+        if str:len() > 2 then str = str .. ", " end
+        str = str .. "\n".. pad .. tostring(k) .. " = "
+        if type_name(v) == "table" then
+            str = str .. table_tostring(v, pad)
+        else
+            str = str .. tostring(v)
+        end
+    end
+    return "\n" .. str .. "\n}"
+end
+
+
+function print_table(...)
+    for i = 1, select("#", ...) do
+        print(table_tostring(select(i,...)))
+    end
+end
