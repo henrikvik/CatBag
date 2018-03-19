@@ -1,24 +1,36 @@
 {
     "Class Template":{
         "prefix": "class",
-        "description": "Template for a lua class with constructor.",
+        "description": "Creates a new class using the file name as class name.",
         "body": [
-            "${1:Class} = {",
+            "${TM_FILENAME_BASE} = {",
             "}",
             "",
             "--==# Constructor #==--",
             "",
-            "function ${1:Class}:new(obj)",
+            "function ${TM_FILENAME_BASE}:new(obj)",
             "    obj = obj or {}",
+            "    self.__type = \"${TM_FILENAME_BASE}\"",
             "    self.__index = self",
-            "    self.__type = \"${1:Class}\"",
             "    setmetatable(obj, self)",
             "    return obj",
             "end",
             "",
-            "--==# Functions #==--",
+            "--==# Meta Functions #==--",
+            "",
+            "--==# Member Functions #==--",
             "",
             "$0"
+        ]
+    },
+
+    "Member Function":{
+        "prefix": "mfunc",
+        "description": "Creates a new member function using file name as class",
+        "body":[
+            "function ${TM_FILENAME_BASE}:${1:function_name}($2)",
+            "    $0",
+            "end"
         ]
     }
 }

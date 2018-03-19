@@ -1,0 +1,16 @@
+{
+    "configurations": [
+        {
+            "name": "launch",
+            "type": "lua",
+            "request": "launch",
+            "stopOnEntry": false,
+            "program": "${workspaceFolder}/${relativeFile}",
+            "cwd": "${workspaceFolder}",
+            "path": "${workspaceFolder}/?.lua",
+            "cpath": "${workspaceFolder}/?.dll",
+            "arg": [],
+            "console": "utf8"
+        }
+    ]
+}
