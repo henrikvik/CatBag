@@ -1,4 +1,6 @@
-Filter = {
+local _, CatBag = ...
+
+local Filter = {
     name = "Unnamed Filter",
     code = "function(item) return false end",
     func = function(item) return false end
@@ -41,3 +43,6 @@ function Filter:set_filter_func(code)
     self.func = func
 end
 
+--==# Export #==--
+
+CatBag.Filter = Filter

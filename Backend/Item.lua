@@ -1,4 +1,6 @@
-Item = {
+local _, CatBag = ...
+
+local Item = {
     bag_id       = -1,
     slot_id      = -1,
 
@@ -67,7 +69,7 @@ function Item:query_info()
     local icon_texture, count,      locked,     quality, 
           readable,     lootable,   link,       is_filtered 
           = GetContainerItemInfo(self.bag_id, self.slot_id)
-          
+
     local name,         link,       rarity,     level, 
           min_level,    base_type,  sub_type,   stack_size,
           equip_loc,    icon_id,    sell_price, class_id,
@@ -104,3 +106,7 @@ function Item:query_info()
     self.icon_id      = icon_id
     self.icon_texture = icon_texture
 end
+
+--==# Export #==--
+
+CatBag.Item = Item

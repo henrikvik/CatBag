@@ -3,8 +3,9 @@
         "prefix": "class",
         "description": "Creates a new class using the file name as class name.",
         "body": [
-            "${TM_FILENAME_BASE} = {",
-            "}",
+            "local _, CatBag = ...",
+            "",
+            "local ${TM_FILENAME_BASE} = {}",
             "",
             "--==# Constructor #==--",
             "",
@@ -20,7 +21,9 @@
             "",
             "--==# Member Functions #==--",
             "",
-            "$0"
+            "--==# Export #==--",
+            "",
+            "CatBag.${TM_FILENAME_BASE} = ${TM_FILENAME_BASE}"
         ]
     },
 
@@ -31,6 +34,15 @@
             "function ${TM_FILENAME_BASE}:${1:function_name}($2)",
             "    $0",
             "end"
+        ]
+    },
+
+    "Import":{
+        "prefix": "import",
+        "description": "Creates a new import line.",
+        "body":[
+            "local ${1:Name} = CatBag.${1:Name}",
+            "$0"
         ]
     }
 }

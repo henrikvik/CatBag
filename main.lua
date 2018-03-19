@@ -1,4 +1,7 @@
-
+local _, CatBag = ...
+local print_table = CatBag.print_table
+local Backend = CatBag.Backend
+local Filter = CatBag.Filter
 
 local b = Backend:new()
 local i = b:query_items()

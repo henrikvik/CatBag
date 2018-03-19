@@ -1,4 +1,7 @@
-Backend = {
+local _, CatBag = ...
+local Item = CatBag.Item
+
+local Backend = {
     items = {}
 }
 
@@ -31,3 +34,7 @@ function Backend:query_items()
     end
     return self.items
 end
+
+--==# Export #==--
+
+CatBag.Backend = Backend

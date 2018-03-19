@@ -1,4 +1,6 @@
-function type_name(var)
+local _, CatBag = ...
+
+local function type_name(var)
     local name = type(var)
     if name == "table" then
         name = var.__type or name
@@ -6,7 +8,7 @@ function type_name(var)
     return name
 end
 
-function assert_type(...)
+local function assert_type(...)
     for i = 1, select("#", ...), 2 do
         local v, t = select(i, ...)
         assert(
@@ -17,7 +19,7 @@ function assert_type(...)
     end
 end
 
-function table_tostring(t, pad)
+local function table_tostring(t, pad)
     if type_name(pad) ~= "string" then pad = "" end
     local str = pad .. "{"
     pad = pad .. "  "
@@ -33,9 +35,23 @@ function table_tostring(t, pad)
     return "\n" .. str .. "\n}"
 end
 
-
-function print_table(...)
+local function print_table(...)
     for i = 1, select("#", ...) do
         print(table_tostring(select(i,...)))
     end
 end
+
+local function merge_table(into, from)
+    for k,v in pairs(from) do
+        into[k] = v
+    end    
+end
+
+--==# Export #==--
+
+merge_table(CatBag, {
+    type_name = type_name,
+    assert_type = assert_type,
+    print_table = print_table,
+    merge_table = merge_table
+})
