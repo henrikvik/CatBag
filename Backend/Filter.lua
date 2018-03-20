@@ -1,4 +1,6 @@
 local _, CatBag = ...
+local Item = CatBag.Item
+local assert_type = CatBag.assert_type
 
 local Filter = {
     name = "Unnamed Filter",
