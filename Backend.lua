@@ -1,8 +1,10 @@
 local _, CatBag = ...
 local Item = CatBag.Item
+local Filter = CatBag.Filter
 
 local Backend = {
-    items = {}
+    items = {},
+    filters = {}
 }
 
 --==# Constructor #==--
@@ -24,15 +26,27 @@ function Backend:query_items()
     for bag_id = 0, 4 do
         local slots = GetContainerNumSlots(bag_id)
         for slot_id = 1, slots do
-            if GetContainerItemID(bag_id, slot_id) then
-                table.insert(self.items, Item:new({
-                    bag_id  = bag_id,
-                    slot_id = slot_id,
-                }))
-            end
+            table.insert(self.items, Item:new({
+                bag_id  = bag_id,
+                slot_id = slot_id,
+            }))
         end
     end
     return self.items
+end
+
+function Backend:new_filter()
+    self.filters = self.filters or {}
+    table.insert(self.filters, Filter:new())
+    return self.filters[#self.filters]
+end
+
+function Backend:filter_items()
+    local unfiltered_items = self.items
+    for index,filter in ipairs(self.filters) do
+        filter.items, unfiltered_items
+        = filter:filter_items(unfiltered_items)
+    end
 end
 
 --==# Export #==--
