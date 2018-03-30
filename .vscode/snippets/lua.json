@@ -3,7 +3,7 @@
         "prefix": "class",
         "description": "Creates a new class using the file name as class name.",
         "body": [
-            "local _, CatBag = ...",
+            "local _, package = ...",
             "",
             "local ${TM_FILENAME_BASE} = {}",
             "",
@@ -23,7 +23,7 @@
             "",
             "--==# Export #==--",
             "",
-            "CatBag.${TM_FILENAME_BASE} = ${TM_FILENAME_BASE}"
+            "package.${TM_FILENAME_BASE} = ${TM_FILENAME_BASE}"
         ]
     },
 
@@ -41,7 +41,7 @@
         "prefix": "import",
         "description": "Creates a new import line.",
         "body":[
-            "local ${1:Name} = CatBag.${1:Name}",
+            "local ${1:Name} = package.${1:Name}",
             "$0"
         ]
     }

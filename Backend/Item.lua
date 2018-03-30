@@ -1,7 +1,7 @@
-local _, CatBag = ...
-local assert_type = CatBag.assert_type
-local type_name = CatBag.type_name
-local merge_table = CatBag.merge_table
+local _, package = ...
+local assert_type = package.assert_type
+local type_name = package.type_name
+local merge_table = package.merge_table
 
 
 
@@ -125,4 +125,4 @@ end
 
 --==# Export #==--
 
-CatBag.Item = Item
+package.Item = Item

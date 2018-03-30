@@ -1,36 +1,34 @@
-local _, CatBag = ...
-local assert_type = CatBag.assert_type
-
+local _, package = ...
 
 local Options = {
-    panel = {},
-    name = nil
+    backend = {}
 }
 
 --==# Constructor #==--
 
 function Options:new(obj)
-    assert_type(obj.name, "string")
-    assert_type(obj.backend, "Backend")
-    
     obj = obj or {}
     self.__type = "Options"
     self.__index = self
     setmetatable(obj, self)
 
-    obj.panel = CreateFrame("FRAME")
-    obj.panel.name = obj.name
-    obj.panel.parent = obj.parent
-    InterfaceOptions_AddCategory(obj.panel)
-
+    obj:create_frame()
     return obj
 end
-
 
 --==# Meta Functions #==--
 
 --==# Member Functions #==--
 
+function Options:create_frame()
+
+end
+
+function Options:create_filter_frame(name)
+
+end
+
+
 --==# Export #==--
 
-CatBag.Options = Options
+package.Options = Options

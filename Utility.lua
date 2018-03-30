@@ -1,4 +1,4 @@
-local _, CatBag = ...
+local _, package = ...
 
 local function type_name(var)
     local name = type(var)
@@ -49,7 +49,7 @@ end
 
 --==# Export #==--
 
-merge_table(CatBag, {
+merge_table(package, {
     type_name = type_name,
     assert_type = assert_type,
     print_table = print_table,

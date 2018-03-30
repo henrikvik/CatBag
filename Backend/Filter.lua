@@ -1,7 +1,7 @@
-local _, CatBag = ...
-local Item = CatBag.Item
-local assert_type = CatBag.assert_type
-local type_name = CatBag.type_name
+local _, package = ...
+local Item = package.Item
+local assert_type = package.assert_type
+local type_name = package.type_name
 
 
 local Filter = {
@@ -54,4 +54,4 @@ end
 
 --==# Export #==--
 
-CatBag.Filter = Filter
+package.Filter = Filter

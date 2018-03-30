@@ -1,6 +1,6 @@
-local _, CatBag = ...
-local Item = CatBag.Item
-local Filter = CatBag.Filter
+local _, package = ...
+local Item = package.Item
+local Filter = package.Filter
 
 local Backend = {
     items = {},
@@ -51,4 +51,4 @@ end
 
 --==# Export #==--
 
-CatBag.Backend = Backend
+package.Backend = Backend

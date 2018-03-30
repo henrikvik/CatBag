@@ -1,7 +1,11 @@
 ## Interface: 70300
+
 ## Title: CatBag
+## Notes: A bag based entierly around the concept of user defined categories
 ## Author: Hnk
 ## Version: 0.0.1
+
+## SavedVariables: CatBagDB
 
 Libs.xml
 
