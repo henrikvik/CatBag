@@ -27,12 +27,16 @@ end
 --==# Meta Functions #==--
 
 function Item:__tostring()
-    return "Item { id = "..self.id..", name = "..self.name.." }"
+    return "Item { id = "..(self.id or -1)..", name = "..(self.name or "").." }"
 end
 
 --==# Member Functions #==--
 
 function Item:update()
+    local bag_id, slot_id = self.bag_id, self.slot_id
+    table.wipe(self)
+    self.bag_id, self.slot_id = bag_id, slot_id
+    
     self.id = GetContainerItemID(self.bag_id, self.slot_id)
 
     if not self:empty() then
@@ -117,9 +121,17 @@ function Item:pickup(amount)
     end
 end
 
-function Item:clone(clone)
-    clone = clone or {}
-    merge_table(clone, self)
+
+local clone = {}
+local function no_write(self, k, v)
+    error("Item is write protected.")
+end
+setmetatable(clone, clone)
+
+function Item:protected_clone()
+    table.wipe(clone)
+    clone.__index = self
+    clone.__newindex = no_write
     return clone
 end
 

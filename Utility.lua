@@ -41,17 +41,29 @@ local function print_table(...)
     end
 end
 
-local function merge_table(into, from)
-    for k,v in pairs(from) do
-        into[k] = v
-    end    
+local function merg_tables(a, b)
+    local t = {}
+    for k,v in pairs(a) do t[k] = v end 
+    for k,v in pairs(b) do t[k] = v end
+    return t
 end
+
+local function mixin(obj, ...)
+    obj = obj or {}
+    for i = 1, select("#", ...) do
+        for k,v in pairs(select(i, ...)) do
+            obj[k] = v
+        end  
+    end
+end
+
 
 --==# Export #==--
 
-merge_table(package, {
+mixin(package, {
     type_name = type_name,
     assert_type = assert_type,
     print_table = print_table,
-    merge_table = merge_table
+    merge_table = merge_table,
+    mixin = mixin
 })

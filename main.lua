@@ -1,30 +1,36 @@
 UIParentLoadAddOn('Blizzard_DebugTools')
 local addon_name, package = ...
-local print_table = package.print_table
-local Backend = package.Backend
-local Filter  = package.Filter
 local Options = package.Options
+local Backend = package.Backend
 
-local CatBag = LibStub("AceAddon-3.0"):NewAddon("CatBag")
+
+local AceDB = LibStub("AceDB-3.0")
+
+local CatBag = LibStub("AceAddon-3.0"):NewAddon("CatBag", "AceEvent-3.0")
+
+local function ReloadBackend(event, db)
+    ReloadUI()
+end
 
 function CatBag:OnInitialize()
-    local b = Backend:new()
-    local f = b:new_filter()
-    f:eval_func("function(item) return item.useable == true end")
-    
-    b:query_items()
-    b:filter_items()
+    self.db = AceDB:New("CatBagDB", {}, true)
+    self.db.profile.backend = Backend:new(self.db.profile.backend)
+    self.db:RegisterCallback("OnProfileReset", ReloadBackend)
+    self.db:RegisterCallback("OnProfileChanged", ReloadBackend)
 
-    local o = Options:new({backend = b})
+    self.options = Options:new({ name = "CatBag", db = self.db})
+    self.options:register_options_tables()
+    self.options:register_bliz_frames()
 end
 
 function CatBag:OnEnable()
+    print("enable")
 end
 
 function CatBag:OnDisable()
 end
 
-  
-
-
+CatBag:RegisterEvent("PLAYER_ENTERING_WORLD", function() 
+    LibStub("AceConfigDialog-3.0"):Open("CatBagCategories")
+end)
 

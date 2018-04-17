@@ -15,6 +15,7 @@ Backend/Item.lua
 Backend/Filter.lua
 Backend.lua
 
+FilterOptionsHandler.lua
 Options.lua
 
 main.lua

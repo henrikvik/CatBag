@@ -6,7 +6,7 @@ local type_name = package.type_name
 
 local Filter = {
     name = "New Filter",
-    code = "function(item) return false end",
+    code = "function(item)\n    return false\nend",
     func = function(item) return false end
 }
 
@@ -31,7 +31,7 @@ function Filter:filter_items(items)
     assert_type(items, "table")
     for _, item in ipairs(items) do
         assert_type(item, "Item")
-        local clone = {}
+
         if not item:empty() and self.func(item) then
             table.insert(passed, item)
         else
@@ -42,14 +42,34 @@ function Filter:filter_items(items)
     return passed, failed
 end
 
-function Filter:eval_func(code)
-    local func = loadstring("return " .. code)()
-    if type_name(func(Item:new())) == "boolean" then
-        self.code = code
-        self.func = func
-        return true
+function Filter:set_code(code)
+    self.code = code
+    self.func = loadstring("return " .. code)()
+end
+
+function Filter:validate_code(code)
+    local s1, r1 = xpcall(function()
+        return loadstring("return " .. code)()
+    end, function(err) 
+        return err
+    end)
+
+    if not s1 then return r1 end
+
+    local s2, r2 = xpcall(function()
+        return r1(Item:new():protected_clone())
+    end, function(err) 
+        return err
+    end)
+
+    if not s2 then return r2 end
+    
+    local r_type = type_name(r2)
+    if r_type ~= "boolean" then
+        return "Function return type has to be boolean. (currently " .. r_type .. ")"
     end
-    return false
+
+    return true
 end
 
 --==# Export #==--

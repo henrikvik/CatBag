@@ -44,5 +44,13 @@
             "local ${1:Name} = package.${1:Name}",
             "$0"
         ]
+    },
+
+    "Anonymous Function":{
+        "prefix": "afunc",
+        "description": "Creates a new anonmymous function.",
+        "body":[
+            "function()end"
+        ]
     }
 }
