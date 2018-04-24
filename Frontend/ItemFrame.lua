@@ -20,14 +20,6 @@ end
 
 --==# Member Functions #==--
 
-function ItemFrame.pickup_item(frame)
-    frame:RegisterEvent("BAG_UPDATE")    
-    PickupContainerItem(
-        frame.self.item.bag_id, 
-        frame.self.item.slot_id
-    )
-end
-
 function ItemFrame:on_enter()
     return function()
         GameTooltip:SetOwner(self.frame,"ANCHOR_LEFT")
@@ -44,8 +36,10 @@ end
 
 function ItemFrame:on_click()
     return function(f, btn)
+        self.frame:RegisterEvent("BAG_UPDATE")
+        
         if btn == "LeftButton" then
-            self.pickup_item(f)
+            self.item:pickup()
         end
     end
 end
@@ -72,7 +66,7 @@ function ItemFrame:create_frame()
     frame:RegisterForClicks("LeftButtonUp","RightButtonUp")
     
     
-    frame:SetScript("OnDragStart", self.pickup_item)
+    frame:SetScript("OnDragStart", self:on_click())
     frame:HookScript("OnClick", self:on_click())
     frame:SetScript("OnEvent", self:on_event())
     frame:SetScript("OnEnter", self:on_enter())

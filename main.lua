@@ -7,6 +7,19 @@ local Options  = package.Options
 local AceDB = LibStub("AceDB-3.0")
 local CatBag = LibStub("AceAddon-3.0"):NewAddon("CatBag", "AceEvent-3.0")
 
+function clean_db(db)
+    local backend = db.profile.backend
+
+    backend.slots = {}
+    backend.unfiltered = {}
+
+    for i, filter in ipairs(backend.filters) do
+        filter.items = {}
+        filter.frame = nil
+    end
+    
+end
+
 function CatBag:OnInitialize()
     self.db = AceDB:New("CatBagDB", { profile = {
         settings = {
@@ -15,7 +28,7 @@ function CatBag:OnInitialize()
                 padding = 2
             },
             width = 8,
-            padding = 6,
+            padding = 5,
             font = {
                 normal = 12,
                 title = 14
@@ -24,6 +37,8 @@ function CatBag:OnInitialize()
     }}, true)
     self.db:RegisterCallback("OnProfileReset", ReloadUI)
     self.db:RegisterCallback("OnProfileChanged", ReloadUI)
+    self.db:RegisterCallback("OnProfileShutdown ", clean_db)
+    self.db:RegisterCallback("OnDatabaseShutdown", clean_db)
 
     self.db.profile.backend = Backend:new(self.db.profile.backend)
 
@@ -32,7 +47,7 @@ function CatBag:OnInitialize()
 
     tinspect(self.db.profile.backend)
 
-    self.db.profile.frontend = Frontend:new({
+    Frontend:new({
         settings = self.db.profile.settings,
         backend = self.db.profile.backend
     })

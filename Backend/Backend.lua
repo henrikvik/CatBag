@@ -4,8 +4,8 @@ local Filter = package.Filter
 
 local Backend = {
     filters = {},
-    items = {},
-    empty = {}
+    slots = {},
+    unfiltered = {}
 }
 
 --==# Constructor #==--
@@ -30,13 +30,16 @@ end
 function Backend:query_items()
     self.items = self.items or {}
     self.empty = self.empty or {}
+    self.slots = self.slots or {}
     table.wipe(self.items)
     table.wipe(self.empty)
+    table.wipe(self.slots)
 
     for bag_id = 0, 4 do
         local slots = GetContainerNumSlots(bag_id)
         for slot_id = 1, slots do
             local item = Item:new({ bag_id  = bag_id, slot_id = slot_id});
+            table.insert(self.slots, item)
             if not item:is_empty() then
                 table.insert(self.items, item)
             else
@@ -63,12 +66,14 @@ function Backend:new_filter()
 end
 
 function Backend:filter_items()
-    local unfiltered_items = self.items
+    local unfiltered_items = self.slots
     for index,filter in ipairs(self.filters) do
         filter.items = filter.items or {}
         table.wipe(filter.items)
         unfiltered_items = filter:filter_items(unfiltered_items, filter.items)
     end
+
+    self.unfiltered = unfiltered_items
 end
 
 function Backend:filter_exists(name)

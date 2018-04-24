@@ -22,7 +22,7 @@ function Filter:new(obj)
     if (obj.code) then
         obj:set_code(obj.code)
     end
-    
+
     return obj
 end
 
@@ -37,11 +37,15 @@ function Filter:filter_items(items, passed)
     for _, item in ipairs(items) do
         assert_type(item, "Item")
 
-        if self.func(item) then
-            table.insert(passed, item)
-        else
+        xpcall(function()
+            if not item:is_empty() and self.func(item) then
+                table.insert(passed, item)
+            else
+                table.insert(failed, item)
+            end
+        end, function()
             table.insert(failed, item)
-        end
+        end)
     end
 
     print(self.name .. ": " .. #items .. " items, " .. #passed .. " passed, " .. #failed .. " failed")

@@ -21,7 +21,8 @@ local Item = {
     readable         = false,
     started_quest    = false,
     starts_quest     = false,
-    useable          = false,
+    has_spell        = false,
+    usable           = false,
 
     -- STRING VALUES --
     base_type      = "",
@@ -88,8 +89,8 @@ function Item:update()
         local   spell_name,     spell_rank,  spell_id
             = GetItemSpell(self.id)
 
-        local   equippable, consumable
-            = IsEquippableItem(self.id), IsConsumableItem(self.id)
+        local   equippable, consumable, usable
+            = IsEquippableItem(self.id), IsConsumableItem(self.id), IsUsableItem(self.id)
 
         local   tooltip
             = self:get_tooltip()
@@ -131,7 +132,8 @@ function Item:update()
         self.readable         = readable == 1
         self.started_quest    = active_quest ~= nil
         self.starts_quest     = quest_id ~= nil
-        self.useable          = spell_id ~= nil
+        self.has_spell        = spell_id ~= nil
+        self.usable           = usable
 
         -- DEV
         self.icon_id      = icon_id
