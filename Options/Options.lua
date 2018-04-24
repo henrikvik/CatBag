@@ -1,5 +1,5 @@
 local _, package = ...
-local FilterOptionsHandler = package.FilterOptionsHandler
+local FilterOptions = package.FilterOptions
 local mixin = package.mixin
 
 local AceConfig = LibStub("AceConfig-3.0")
@@ -52,7 +52,7 @@ function Options:create_category_options()
     return function()
         local options = {
             type = "group",
-            name = self.name .. " Categories",
+            name = "Categories",
             args = {
                 new = {
                     order = 0,
@@ -66,10 +66,10 @@ function Options:create_category_options()
         }
 
         for index, filter in ipairs(self.db.profile.backend.filters) do
-            options.args[filter.name] = FilterOptionsHandler:new({
+            options.args[filter.name] = FilterOptions:new({
                 backend = self.db.profile.backend,
-                index = index,
-                filter = filter
+                filter = filter,
+                index = index
             }).options
         end
         

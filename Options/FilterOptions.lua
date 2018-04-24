@@ -1,6 +1,6 @@
 local _, package = ...
 
-local FilterOptionsHandler = {
+local FilterOptions = {
     backend = {},
     filter = {},
     index = -1,
@@ -9,9 +9,9 @@ local FilterOptionsHandler = {
 
 --==# Constructor #==--
 
-function FilterOptionsHandler:new(obj)
+function FilterOptions:new(obj)
     obj = obj or {}
-    self.__type = "FilterOptionsHandler"
+    self.__type = "FilterOptions"
     self.__index = self
     setmetatable(obj, self)
 
@@ -24,7 +24,7 @@ end
 
 --==# Member Functions #==--
 
-function FilterOptionsHandler:make_options()
+function FilterOptions:make_options()
     return {
         type = "group",
         name = self.filter.name,
@@ -73,7 +73,7 @@ function FilterOptionsHandler:make_options()
     }
 end
 
-function FilterOptionsHandler:move_up()
+function FilterOptions:move_up()
     if self.index > 1 then
         table.remove(self.backend.filters, self.index)
         table.insert(self.backend.filters, self.index - 1, self.filter)
@@ -81,49 +81,49 @@ function FilterOptionsHandler:move_up()
 end
 
 
-function FilterOptionsHandler:move_down()
+function FilterOptions:move_down()
     if self.index < #self.backend.filters then
         table.remove(self.backend.filters, self.index)
         table.insert(self.backend.filters, self.index + 1, self.filter)
     end
 end
 
-function FilterOptionsHandler:remove()
+function FilterOptions:remove()
     table.remove(self.backend.filters, self.index)
 end
 
-function FilterOptionsHandler:remove_confirm()
+function FilterOptions:remove_confirm()
     return "Are you sure you want to remove \"" ..
         self.filter.name .. "\"?\nThis action can not be undone."
 end
 
-function FilterOptionsHandler:name_get()
+function FilterOptions:name_get()
     return self.filter.name 
 end
 
-function FilterOptionsHandler:name_set(info, name)
+function FilterOptions:name_set(info, name)
     self.filter.name = name
 end
 
-function FilterOptionsHandler:name_validate(info, name)
+function FilterOptions:name_validate(info, name)
     if name ~= self.filter.name and self.backend:filter_exists(name) then
         return "A category with name \"" .. name .. "\" already exists"
     end
     return true
 end
 
-function FilterOptionsHandler:code_get()
+function FilterOptions:code_get()
     return self.filter.code
 end
 
-function FilterOptionsHandler:code_set(info, code) 
+function FilterOptions:code_set(info, code) 
     self.filter:set_code(code)
 end
 
-function FilterOptionsHandler:code_validate(info, code)
+function FilterOptions:code_validate(info, code)
     return self.filter:validate_code(code)
 end
 
 --==# Export #==--
 
-package.FilterOptionsHandler = FilterOptionsHandler
+package.FilterOptions = FilterOptions

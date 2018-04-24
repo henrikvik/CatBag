@@ -13,9 +13,13 @@ Utility.lua
 
 Backend/Item.lua
 Backend/Filter.lua
-Backend.lua
+Backend/Backend.lua
 
-FilterOptionsHandler.lua
-Options.lua
+Frontend/ItemFrame.lua
+Frontend/FilterFrame.lua
+Frontend/Frontend.lua
+
+Options/FilterOptions.lua
+Options/Options.lua
 
 main.lua

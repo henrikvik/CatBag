@@ -1,5 +1,8 @@
 local _, package = ...
 
+UIParentLoadAddOn('Blizzard_DebugTools')
+tinspect = DisplayTableInspectorWindow
+
 local function type_name(var)
     local name = type(var)
     if name == "table" then
@@ -49,7 +52,6 @@ local function merg_tables(a, b)
 end
 
 local function mixin(obj, ...)
-    obj = obj or {}
     for i = 1, select("#", ...) do
         for k,v in pairs(select(i, ...)) do
             obj[k] = v
