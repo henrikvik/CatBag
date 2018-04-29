@@ -1,0 +1,9 @@
+<Ui xsi:schemaLocation="http://www.blizzard.com/wow/ui/ ..\FrameXML\UI.xsd">
+  <Script file="Frontend/ButtonFrame.lua"/>
+  <Script file="Frontend/TitleFrame.lua"/>
+  <Script file="Frontend/CurrencyFrame.lua"/>
+  <Script file="Frontend/StatusFrame.lua"/>
+  <Script file="Frontend/ItemFrame.lua"/>
+  <Script file="Frontend/FilterFrame.lua"/>
+  <Script file="Frontend/Frontend.lua"/>
+</Ui>

@@ -37,7 +37,7 @@ function Filter:filter_items(items, passed)
     for _, item in ipairs(items) do
         assert_type(item, "Item")
 
-        xpcall(function()
+        local flag = xpcall(function()
             if not item:is_empty() and self.func(item) then
                 table.insert(passed, item)
             else
@@ -46,10 +46,11 @@ function Filter:filter_items(items, passed)
         end, function()
             table.insert(failed, item)
         end)
-    end
 
-    print(self.name .. ": " .. #items .. " items, " .. #passed .. " passed, " .. #failed .. " failed")
-    
+        if not flag then 
+            print(self.name .. " FAILED, RUNTIME ERROR")
+        end
+    end
 
     return failed
 end

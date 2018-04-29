@@ -1,4 +1,6 @@
 local _, package = ...
+local REST = package.REST
+
 
 local ItemFrame = {}
 
@@ -11,7 +13,10 @@ function ItemFrame:new(obj)
     setmetatable(obj, self)
 
     obj:create_frame()
-    obj:update()
+    
+    if obj.item then
+        obj:set_item(obj.item)
+    end
 
     return obj
 end
@@ -46,62 +51,90 @@ end
 
 function ItemFrame:on_event()
     return function(f, event)
-        if event == "BAG_UPDATE"  then
+        if event == "BAG_UPDATE" then
+            self.frame:UnregisterEvent("BAG_UPDATE")
+            self.item:update()
             self:update()
         end
     end
 end
 
-function ItemFrame:create_frame()
-    local frame = CreateFrame("Button", nil, self.parent, "SecureActionButtonTemplate")
-    self.frame = frame
-    frame.self = self
-    frame:SetHeight(self.settings.size)
-    frame:SetWidth(self.settings.size)
+function ItemFrame:set_item(item)
+    self.item = item
+    self.frame:SetAttribute("item", 
+        self.item.bag_id .. " " .. self.item.slot_id)
+    self:update()
+end
 
-    frame:SetAttribute("type2", "item")
-    frame:SetAttribute("item", self.item.bag_id.." "..self.item.slot_id)
+function ItemFrame:set_point(p, f, fp, x, y)
+    self.frame:SetPoint(p, f, fp, x, y)
+end
+
+function ItemFrame:set_parent(parent)
+    self.frame:SetParent(parent)
+end
+
+
+function ItemFrame:create_frame()
+    local settings = REST:Get("SETTINGS")
     
+    local frame = CreateFrame("Button", nil, self.parent, "SecureActionButtonTemplate")
+    frame:SetHeight(settings.item.size)
+    frame:SetWidth(settings.item.size)
+    frame:SetAttribute("type2", "item")
     frame:RegisterForDrag("LeftButton")
     frame:RegisterForClicks("LeftButtonUp","RightButtonUp")
-    
-    
+    frame:HookScript("OnClick", self:on_click()) 
     frame:SetScript("OnDragStart", self:on_click())
-    frame:HookScript("OnClick", self:on_click())
     frame:SetScript("OnEvent", self:on_event())
     frame:SetScript("OnEnter", self:on_enter())
     frame:SetScript("OnLeave", self:on_leave())
 
 
+    local border = CreateFrame("FRAME", nil, frame)
+    border:SetPoint("TOPLEFT", frame, "TOPLEFT", 
+        -settings.item.border.inset, 
+        settings.item.border.inset)
+    border:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", 
+        settings.item.border.inset, 
+        -settings.item.border.inset)
+    border:SetBackdrop({
+        edgeFile = settings.item.border.texture,
+        edgeSize = settings.item.border.size})
+    frame.border = border
 
-    local inset = 2
-    frame.border = CreateFrame("FRAME", nil, frame)
-    frame.border:SetPoint("TOPLEFT", frame, "TOPLEFT", -inset, inset)
-    frame.border:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", inset, -inset)
-    frame.border:SetBackdrop({
-        edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border.blp",
-        edgeSize = 16
-    })
 
-    frame.bg = frame:CreateTexture(nil, "BACKGROUND")
-    frame.bg:SetAllPoints(frame)
-    frame.bg:SetTexture("Interface\\PaperDoll\\UI-Backpack-EmptySlot.blp")
-    
-    frame.hi_q = frame:CreateTexture(nil, "OVERLAY")
-    frame.hi_q:SetBlendMode("ADD")
-    frame.hi_q:SetTexture("Interface\\BUTTONS\\CheckButtonHilight.blp")
-    frame.hi_q:SetVertexColor(1, 0.8, 0, 1)
-    frame.hi_q:SetAllPoints(frame)
-    frame.hi_q:SetDesaturated(true)
+    local bg = frame:CreateTexture(nil, "BACKGROUND")
+    bg:SetTexture("Interface\\PaperDoll\\UI-Backpack-EmptySlot.blp")
+    bg:SetAllPoints(frame)
+    frame.bg = bg
 
-    if not self.item.quest_item then frame.hi_q:Hide() end
 
-    frame.hi = frame:CreateTexture(nil, "HIGHLIGHT")
-    frame.hi:SetBlendMode("ADD")
-    frame.hi:SetTexture("Interface\\BUTTONS\\CheckButtonHilight.blp")
-    frame.hi:SetVertexColor(0.5,0.75,1,0.75)
-    frame.hi:SetAllPoints(frame)
-    frame.hi:SetDesaturated(true)
+    local icon = frame:CreateTexture(nil, "ARTWORK")
+    icon:SetAllPoints(frame)
+    frame.icon = icon
+
+
+    local hi_q = frame:CreateTexture(nil, "OVERLAY")
+    hi_q:SetTexture("Interface\\BUTTONS\\CheckButtonHilight.blp")
+    hi_q:SetVertexColor(1, 0.8, 0, 1)
+    hi_q:SetDesaturated(true)
+    hi_q:SetBlendMode("ADD")
+    hi_q:SetAllPoints(frame)
+    hi_q:Hide()
+    frame.hi_q = hi_q
+
+
+    local hi = frame:CreateTexture(nil, "HIGHLIGHT")
+    hi:SetTexture("Interface\\BUTTONS\\CheckButtonHilight.blp")
+    hi:SetVertexColor(0.5,0.75,1,0.75)
+    hi:SetDesaturated(true)
+    hi:SetBlendMode("ADD")
+    hi:SetAllPoints(frame)
+    frame.hi = hi
+
+
+    self.frame = frame
 end
 
 function ItemFrame:get_quality_color()
@@ -113,10 +146,8 @@ function ItemFrame:get_quality_color()
 end
 
 function ItemFrame:update()
-    self.frame:UnregisterEvent("BAG_UPDATE")
-    
-    self.item:update()
-    self.frame.bg:SetTexture(self.item.icon_texture)
+
+    self.frame.icon:SetTexture(self.item.icon_texture)
 
     local r, g, b = self:get_quality_color()
     self.frame.border:SetBackdropBorderColor(r, g, b, 1)

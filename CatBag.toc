@@ -7,19 +7,17 @@
 
 ## SavedVariables: CatBagDB
 
+# Dependencies
 Libs.xml
 
+# Misc
+REST.lua
 Utility.lua
 
-Backend/Item.lua
-Backend/Filter.lua
-Backend/Backend.lua
+# Objects
+Backend.xml
+Frontend.xml
+Options.xml
 
-Frontend/ItemFrame.lua
-Frontend/FilterFrame.lua
-Frontend/Frontend.lua
-
-Options/FilterOptions.lua
-Options/Options.lua
-
+# Entrypoint
 main.lua

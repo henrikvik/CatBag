@@ -1,4 +1,6 @@
 local _, package = ...
+local REST = package.REST
+
 
 local FilterOptions = {
     backend = {},
@@ -77,6 +79,7 @@ function FilterOptions:move_up()
     if self.index > 1 then
         table.remove(self.backend.filters, self.index)
         table.insert(self.backend.filters, self.index - 1, self.filter)
+        REST:Send("UPDATE")
     end
 end
 
@@ -85,11 +88,13 @@ function FilterOptions:move_down()
     if self.index < #self.backend.filters then
         table.remove(self.backend.filters, self.index)
         table.insert(self.backend.filters, self.index + 1, self.filter)
+        REST:Send("UPDATE")
     end
 end
 
 function FilterOptions:remove()
     table.remove(self.backend.filters, self.index)
+    REST:Send("UPDATE")
 end
 
 function FilterOptions:remove_confirm()
@@ -103,6 +108,7 @@ end
 
 function FilterOptions:name_set(info, name)
     self.filter.name = name
+    REST:Send("UPDATE")
 end
 
 function FilterOptions:name_validate(info, name)
@@ -118,6 +124,7 @@ end
 
 function FilterOptions:code_set(info, code) 
     self.filter:set_code(code)
+    REST:Send("UPDATE")
 end
 
 function FilterOptions:code_validate(info, code)

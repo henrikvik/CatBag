@@ -59,6 +59,11 @@ local function mixin(obj, ...)
     end
 end
 
+local function calc_width(settings, num_items)
+    return (settings.item.size + settings.item.padding)
+        * (num_items or settings.width) - settings.item.padding
+end
+
 
 --==# Export #==--
 
@@ -67,5 +72,6 @@ mixin(package, {
     assert_type = assert_type,
     print_table = print_table,
     merge_table = merge_table,
-    mixin = mixin
+    calc_width = calc_width,
+    mixin = mixin,
 })

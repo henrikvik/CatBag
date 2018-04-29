@@ -27,24 +27,33 @@ end
 
 --==# Member Functions #==--
 
-function Backend:query_items()
-    self.items = self.items or {}
-    self.empty = self.empty or {}
+function Backend:query_slots()
     self.slots = self.slots or {}
-    table.wipe(self.items)
-    table.wipe(self.empty)
+    for _,slot in ipairs(self.slots) do table.wipe(slot) end
     table.wipe(self.slots)
 
     for bag_id = 0, 4 do
-        local slots = GetContainerNumSlots(bag_id)
-        for slot_id = 1, slots do
-            local item = Item:new({ bag_id  = bag_id, slot_id = slot_id});
-            table.insert(self.slots, item)
-            if not item:is_empty() then
-                table.insert(self.items, item)
-            else
-                table.insert(self.empty, item)
-            end
+        local num_slots = GetContainerNumSlots(bag_id)
+        for slot_id = 1, num_slots do
+            table.insert(self.slots,
+                Item:new({ bag_id  = bag_id, slot_id = slot_id})
+            )
+        end
+    end
+
+    self:update_items()
+end
+
+function Backend:update_items()
+    self.items = table.wipe(self.items or {})
+    self.empty = table.wipe(self.empty or {})
+
+    for i,slot in ipairs(self.slots) do
+        slot:update()
+        if not slot:is_empty() then
+            table.insert(self.items, slot)
+        else
+            table.insert(self.empty, slot)
         end
     end
 end
@@ -66,10 +75,9 @@ function Backend:new_filter()
 end
 
 function Backend:filter_items()
-    local unfiltered_items = self.slots
+    local unfiltered_items = self.items
     for index,filter in ipairs(self.filters) do
-        filter.items = filter.items or {}
-        table.wipe(filter.items)
+        filter.items = table.wipe(filter.items or {})        
         unfiltered_items = filter:filter_items(unfiltered_items, filter.items)
     end
 

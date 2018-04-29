@@ -1,5 +1,7 @@
-local _, package = ...
-local ItemFrame = package.ItemFrame
+local _, g = ...
+local ItemFrame = g.ItemFrame
+local calc_width = g.calc_width
+local REST = g.REST
 
 
 local FilterFrame = {
@@ -19,9 +21,10 @@ function FilterFrame:new(obj)
     obj:create_wrapper_frame()
     obj:create_title_frame()
     obj:create_content_frame()
-    obj.wrapper:Show()
 
-    obj:update()
+    if obj.filter then 
+        obj:set_filter(obj.filter) 
+    end
 
     return obj
 end
@@ -30,126 +33,125 @@ end
 
 --==# Member Functions #==--
 
-function FilterFrame:calc_items_size(num)
-    return (self.settings.item.size + self.settings.item.padding) 
-        * num - self.settings.item.padding
-end
-
 function FilterFrame:create_wrapper_frame()
-    self.wrapper = CreateFrame("FRAME", self.filter.name .. "Wrapper", self.parent)
-    local wrapper = self.wrapper
-    local height = math.ceil(#self.filter.items / self.settings.width)
+    local wrapper = CreateFrame("FRAME", nil, self.parent)
     
-    wrapper:SetWidth(self:calc_items_size(self.settings.width) + self.settings.padding * 2)
-    wrapper:SetPoint("TOPLEFT", self.relative, "BOTTOMLEFT", 0, -self.settings.padding)
-    
+    local settings = REST:Get("SETTINGS")
+    wrapper:SetWidth(calc_width(settings) + settings.padding * 2)
+    wrapper:SetHeight(settings.font.normal + settings.padding * 2)
+
     wrapper.bg = wrapper:CreateTexture(nil, "BACKGROUND")
-    wrapper.bg:SetTexture("Interface\\Tooltips\\CHATBUBBLE-BACKGROUND.BLP")
+    wrapper.bg:SetTexture(settings.bg_texture)
     wrapper.bg:SetAllPoints(wrapper)
+
+    self.wrapper = wrapper
 end
 
 function FilterFrame:create_title_frame()
-    self.title = CreateFrame("FRAME", nil, self.wrapper)
-    local title = self.title
-    title:Show()
-
-    title:SetHeight(self.settings.padding * 2 + self.settings.font.normal)
+    local settings = REST:Get("SETTINGS")
+    
+    local title = CreateFrame("FRAME", nil, self.wrapper)
+    title:SetHeight(settings.font.normal + settings.padding * 2)
     title:SetWidth(self.wrapper:GetWidth())
     title:SetPoint("TOPLEFT", self.wrapper)
+    title:SetScript("OnMouseDown", function(_, button) 
+        self.filter.closed = not self.filter.closed
+        self:update()
+    end)
 
-    title.arrow = title:CreateTexture(nil, "ARTWORK")
-    local arrow = title.arrow
+    local arrow = title:CreateTexture(nil, "ARTWORK")
     arrow:SetTexture("Interface\\Worldmap\\WorldMapArrow.blp")
     arrow:SetWidth(24)
     arrow:SetHeight(arrow:GetWidth())    
     arrow:SetPoint("CENTER", title, "TOPLEFT", 
        arrow:GetWidth() / 2, title:GetHeight() / -2)
+    title.arrow = arrow
 
-    title.text = title:CreateFontString(nil, "OVERLAY")
-    local text = title.text
-    text:SetFont("Fonts\\FRIZQT__.TTF", 12)
-    text:SetText(self.filter.name)
+
+    local text = title:CreateFontString(nil, "OVERLAY")
+    text:SetFont("Fonts\\FRIZQT__.TTF", settings.font.normal)
     text:SetPoint("TOPLEFT", title, "TOPLEFT", 
-        self.settings.padding * 2 + arrow:GetWidth() / 2, -self.settings.padding)
+        settings.padding * 2 + arrow:GetWidth() / 2, -settings.padding)
+    title.text = text
 
-    title:SetScript("OnMouseDown", function(_, button) 
-        self.closed = not self.closed
-        self:update()
-    end)
+    self.title = title
 end
 
 function FilterFrame:create_content_frame()
-    self.content = CreateFrame("FRAME", nil, self.wrapper)
-    local content = self.content
+    local settings = REST:Get("SETTINGS")
 
-    local width = self.settings.width
-    local height = math.ceil(#self.filter.items / width)
-
-    content:SetWidth(self:calc_items_size(width))
-    content:SetHeight(self:calc_items_size(height))
+    local content = CreateFrame("FRAME", nil, self.wrapper)
+    content:SetWidth(calc_width(settings))
+    content:SetHeight(1)
     content:SetPoint("TOPLEFT", self.title, "BOTTOMLEFT", 
-        self.settings.padding, 0)
+        settings.padding, 0)
     
-    content.items = {}
-    local item_offset = self.settings.item.size + self.settings.item.padding    
-    for i, item in ipairs(self.filter.items) do
-        local item_frame = ItemFrame:new({ 
-            item = item,
-            settings = self.settings.item,
-            parent = self.content
-        })
-        table.insert(content.items, item_frame)
+    self.content = content
+end
 
-        local i = i - 1
-        local x = (i % width) * item_offset
-        local y = math.floor(i / width) * item_offset
 
-        item_frame.frame:SetPoint("TOPLEFT", content, "TOPLEFT", x, -y)
+function FilterFrame:set_point(p, f, fp, x, y)
+    self.wrapper:SetPoint(p, f, fp, x, y)
+end
+
+function FilterFrame:set_filter(filter)
+    self.filter = filter
+    self.title.text:SetText(self.filter.name)
+    self:update()
+end
+
+function FilterFrame:set_item_frames(items)
+    local settings = REST:Get("SETTINGS")
+
+    self.content:SetWidth(calc_width(settings))
+    self.content:SetHeight(calc_width(settings,
+        math.ceil(#items / settings.width)
+    ) + settings.padding)
+    
+
+    self.content.items = table.wipe(self.content.items or {})
+    local offset = settings.item.size + settings.item.padding
+    for i, item in ipairs(items) do
+        local id = i - 1
+        local col = id % settings.width
+        local row = -math.floor(id / settings.width)
+
+        item:set_parent(self.content)
+        item:set_point("TOPLEFT", self.content, "TOPLEFT",
+            col * offset, row * offset)
     end
+
+    self:update()
 end
 
-function FilterFrame:set_item_frames(item_frames)
-end
-
-function FilterFrame:create_item_frame(item)
-
+function FilterFrame:open()
+    local down = 3.1415
     
-    return frame
+    self.title.arrow:SetRotation(down)
+    self.wrapper:SetHeight(
+        self.title:GetHeight() +
+        self.content:GetHeight())
+    self.content:Show()   
 end
 
-function FilterFrame:change_offset(x, y)
-    local p, rf, rp = self.wrapper:GetPoint()
-    self.wrapper:SetPoint(p, rf, rp, x, y)
+function FilterFrame:close()
+    local right = 3.1415 / -2
+
+    self.title.arrow:SetRotation(right)
+    self.wrapper:SetHeight(
+        self.title:GetHeight())
+    self.content:Hide()
 end
 
 function FilterFrame:update()
-    local down = 3.14159
-    local right = down / -2
-
-    self.hidden = #self.filter.items == 0
-
-    if self.hidden then
-        self.title:Hide()
-        self.wrapper.bg:Hide()
-        self.wrapper:SetHeight(1)
-        self:change_offset(0, 1)
+    if self.filter.closed then
+        self:close()
     else
-        self.wrapper.bg:Show()
-        self:change_offset(0, -self.settings.padding)        
-        
-        if self.closed then
-            self.wrapper:SetHeight(self.title:GetHeight())
-            self.title.arrow:SetRotation(right)
-            self.content:Hide()
-        else
-            self.wrapper:SetHeight(self.title:GetHeight() 
-                + self.content:GetHeight() + self.settings.padding)
-            self.title.arrow:SetRotation(down)
-            self.content:Show()
-        end
+        self:open()
     end
 end
 
+
 --==# Export #==--
 
-package.FilterFrame = FilterFrame
+g.FilterFrame = FilterFrame
