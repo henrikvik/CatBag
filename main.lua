@@ -36,6 +36,13 @@ function CatBag:OnInitialize()
         REST:Send("FILTER_ITEMS")
         REST:Send("UPDATE_LAYOUT")
     end)
+
+
+    hooksecurefunc("ToggleAllBags", function()
+        REST:Send("TOGGLE_BAG")
+        CloseAllBags()
+    end)
+
 end
 
 function CatBag:load_db()
@@ -97,10 +104,6 @@ end
 
 function CatBag:load_frontend()
     self.frontend = Frontend:new()
-
-    REST:Listen("UPDATE_LAYOUT", function()
-        self.frontend:update_layout()
-    end)
 end
 
 function CatBag:OnEnable()

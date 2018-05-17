@@ -4,14 +4,16 @@ Add virtual stacks: item of the same id and stack size stack
 make a scroll frame
 add buttons on filters
 bag changer
-bind functions on title
 resize
 item spy (show item table value)
 hide filters
-enable open close on hotkey
 add combat support
+item stack text
+steal item template
 
 * DONE
+bind functions on title
+enable open close on hotkey
 Optimize frame usage
 auto update frontend on backend changes
 enable new filter frames

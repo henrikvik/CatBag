@@ -27,6 +27,8 @@ function Frontend:new(obj)
 
     obj:update_layout()
 
+    obj:register_rest()
+
     return obj
 end
 
@@ -43,7 +45,7 @@ function Frontend:create_title()
     self.title:set_point("TOPRIGHT", UIParent, "BOTTOMRIGHT", -100, 500)
     self.title:add_button("RIGHT", {
         icon = "Interface\\ICONS\\INV_Misc_EngGizmos_27.blp",
-        func = function() print("CLOSE") end })
+        func = function() REST:Send("HIDE_BAG") end })
     self.title:add_button("RIGHT", {
         icon = "Interface\\ICONS\\INV_Misc_Gear_02.blp",
         func = function() LibStub("AceConfigDialog-3.0"):Open("CatBagCategories") end })
@@ -162,6 +164,29 @@ function Frontend:recycel_frames()
 
     table.wipe(self.filter_frames)
     table.wipe(self.item_frames)    
+end
+
+function Frontend:register_rest()
+    REST:Listen("UPDATE_LAYOUT", function()
+        self:update_layout()
+    end)
+
+    REST:Listen("HIDE_BAG", function()
+        self.title.frame:Hide()
+    end)
+
+    REST:Listen("SHOW_BAG", function()
+        self.title.frame:Show()
+    end)
+
+    REST:Listen("TOGGLE_BAG", function()
+        if self.title.frame:IsShown() then
+            self.title.frame:Hide()
+        else
+            self.title.frame:Show()
+        end
+    end)
+
 end
 
 --==# Export #==--
