@@ -166,7 +166,7 @@ function Item:is_empty()
 end
 
 function Item:use()
-    UseContainerItem(self.bag_id, self.slot_id)
+    UseContainerItem(self.bag_id, self.slot_id, nil, true)
 end
 
 function Item:pickup(amount)

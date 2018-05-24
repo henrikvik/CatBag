@@ -117,5 +117,13 @@ CatBag:RegisterEvent("PLAYER_ENTERING_WORLD", function()
     REST:Send("UPDATE_ITEMS")
     REST:Send("FILTER_ITEMS")
     REST:Send("UPDATE_LAYOUT")
+
+    CatBag:RegisterEvent("BAG_UPDATE", function()
+        REST:Send("UPDATE_ITEMS")
+        REST:Send("FILTER_ITEMS")
+        REST:Send("UPDATE_LAYOUT")
+    end)
 end)
+
+
 

@@ -30,12 +30,17 @@ function ItemFrame:on_enter()
         GameTooltip:SetOwner(self.frame,"ANCHOR_LEFT")
         GameTooltip:SetBagItem(self.item.bag_id,self.item.slot_id)
         GameTooltip:Show()
+
+        if MerchantFrame:IsShown() then
+            SetCursor("BUY_CURSOR")
+        end
     end
 end
 
 function ItemFrame:on_leave()
     return function()
         GameTooltip:Hide()
+        SetCursor("POINT_CURSOR")
     end
 end
 
@@ -45,6 +50,10 @@ function ItemFrame:on_click()
         
         if btn == "LeftButton" then
             self.item:pickup()
+        end
+
+        if btn == "MiddleButton" then
+            tinspect(self.item)            
         end
     end
 end
@@ -83,7 +92,7 @@ function ItemFrame:create_frame()
     frame:SetWidth(settings.item.size)
     frame:SetAttribute("type2", "item")
     frame:RegisterForDrag("LeftButton")
-    frame:RegisterForClicks("LeftButtonUp","RightButtonUp")
+    frame:RegisterForClicks("LeftButtonUp","RightButtonUp", "MiddleButtonUp")
     frame:HookScript("OnClick", self:on_click()) 
     frame:SetScript("OnDragStart", self:on_click())
     frame:SetScript("OnEvent", self:on_event())
@@ -102,6 +111,12 @@ function ItemFrame:create_frame()
         edgeFile = settings.item.border.texture,
         edgeSize = settings.item.border.size})
     frame.border = border
+
+
+    local ss = frame:CreateFontString(nil, "OVERLAY")
+    ss:SetFont("Fonts\\ARIALN.TTF", 14, "OUTLINE")
+    ss:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", -2, 3)
+    frame.ss = ss
 
 
     local bg = frame:CreateTexture(nil, "BACKGROUND")
@@ -156,7 +171,13 @@ function ItemFrame:update()
         self.frame.hi_q:Show()
     else
         self.frame.hi_q:Hide()
-    end    
+    end
+
+    if (self.item.stack_count or 0) > 1 then
+        self.frame.ss:SetText(self.item.stack_count)
+    else
+        self.frame.ss:SetText("")
+    end
 end
 
 --==# Export #==--
